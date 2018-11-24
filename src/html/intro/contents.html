@@ -1,0 +1,55 @@
+<div class='title'>文件目录</div>
+<div class='text'>使用npm方式安装完成 或 手动下载Jet压缩包解压之后，会有如下的文件结构：</div>
+<div class='text'>
+    <div class='list'>
+        <div><i class="icon icon-folder-close-alt"></i> 
+            assets 
+            <span class='light-text'>(框架相关的代码和资源，无需开发者关注)</span>
+        </div>
+        <div><i class="icon icon-folder-close-alt"></i> 
+            node_modules
+            <span class='light-text'>(主要是lite-server相关的依赖，无需开发者关注)</span>
+        </div>
+        <div style="color:#4a4"><i class="icon icon-folder-open-alt"></i> 
+            <span>src</span>
+            <span class='light-text'>(开发者主要编写代码的目录)</span>
+            <div class='list'>
+                <div><i class="icon icon-folder-open-alt"></i> css 
+                    <span class='light-text'>(css 文件目录)</span>
+                    <div class='list'>
+                        <div><i class="icon icon-file-code"></i> common.css
+                            <span class='light-text'>(全局公共样式)</span>
+                        </div>
+                        <div><i class="icon icon-file-code"></i> css.conf
+                            <span class='light-text'>(css 配置文件)</span>
+                        </div>
+                    </div>
+                </div>
+                <div><i class="icon icon-folder-close-alt"></i> html 
+                    <span class='light-text'>(页面模板和组件的目录)</span>
+                </div>
+                <div><i class="icon icon-folder-close-alt"></i> image
+                    <span class='light-text'>(图片资源目录)</span>
+                </div>
+                <div><i class="icon icon-folder-close-alt"></i> js
+                    <span class='light-text'>(js文件和模块文件)</span>
+                </div>
+                <div><i class="icon icon-folder-close-alt"></i> media
+                    <span class='light-text'>(媒体资源文件)</span>
+                </div>
+                <div><i class="icon icon-file-code"></i> config.js
+                    <span class='light-text'>(在index.html中引用了该文件，该文件是一个全局配置文件，作用是加载依赖库、设置路由、国际化、验证等初始化参数。)</span></div>
+                <div><i class="icon icon-file-code"></i> root.html
+                    <span class='light-text'>(根组件)</span></div>
+                <div><i class="icon icon-file-code"></i> root.js
+                    <span class='light-text'>(根组件的js部分，也可将其放入root.html中，该文件非必需)</span></div>
+            </div>
+        </div>
+        <div><i class="icon icon-file-code"></i> index.html
+            <span class='light-text'>(入口html文件，开发者除了修改head中的信息外，基本无需关注)</span></div>
+        <div><i class="icon icon-file-code"></i> package.json
+            <span class='light-text'>(项目信息与相关依赖，无需开发者关注)</span></div>
+        <div><i class="icon icon-file-code"></i> package-lock.json
+            <span class='light-text'>(项目信息与相关依赖，无需开发者关注)</span></div>
+    </div>
+</div>
