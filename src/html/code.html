@@ -20,6 +20,7 @@
     .result{
         border: 1px solid #aaa;    
         word-wrap: break-word;
+        overflow-x: hidden;
     }
 </style>
 <div class='title'>在线使用Jet</div>
@@ -143,12 +144,12 @@ new Jet({
             this.$storage('showBack',null);
         },
         loadCode:function(){
-            if(typeof Jet.$root._code!=='undefined'){
-                this.code=Jet.$root._code;
+            if(typeof Jet.root._code!=='undefined'){
+                this.code=Jet.root._code;
                 this.$storage('testCode',this.code);
                 this.$storage('showBack',true);
-                //this.$jui('code').txt(Jet.$root._code)
-                Jet.$root._code=undefined;
+                //this.$jui('code').txt(Jet.root._code)
+                Jet.root._code=undefined;
                 this.back=true;
             }
         },initKeyDown:function(jdom){

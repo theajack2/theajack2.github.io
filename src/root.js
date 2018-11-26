@@ -1,8 +1,8 @@
 window.$J=Jet.$;
-new Jet({
+JET({
     beforeinitawait: function (next) {
-      JUI.CODE.tab = '    ';
-      Jet.$import('@content', '@api', '@scroll', function () {
+      JUI.CODE.tab = '    '; 
+      Jet.import('@content', '@api', '@scroll', function () {
         next();
       })
     },
@@ -13,7 +13,13 @@ new Jet({
     onrouted: function (isFresh) {
       console.log('onrouted');
       if (!isFresh) {
-        Jet.$module.Scroll.routed();
+        Jet.module.Scroll.routed();
+      }
+    },
+    onmounted:function(){
+      var _this=this;
+      window.onresize=function(){
+        _this.height=$J.height();
       }
     },
     data: {
@@ -36,8 +42,8 @@ new Jet({
       //   }
       // },
       testOnLine: function (item) {
-        Jet.$root._top = $J.body().scrollTop;
-        Jet.$root._code = item.next().$jui.txt();
+        Jet.root._top = $J.body().scrollTop;
+        Jet.root._code = item.next().$jui.txt();
         this.$route('/code');
       },
       jumpTo: function (url, des, call) {
@@ -46,8 +52,8 @@ new Jet({
           setTimeout(function () {
             var top = 0;
             if (des != '') {
-              top = $J.attr('jump-des="' + des + '"').offsetTop + Jet.$module.Scroll.scrollTopMargin();
-              Jet.$root.__des = des;
+              top = $J.attr('jump-des="' + des + '"').offsetTop + Jet.module.Scroll.scrollTopMargin();
+              Jet.root.__des = des;
             }
             //_this.$dom.root.ele.scrollTo(top);
             _this.$dom.root.ele.scrollTop=top;
@@ -59,7 +65,7 @@ new Jet({
       }, onmenuload: function () {
         Jet.router.activeRouter()
       }, onfooterload: function () {
-        Jet.$module.Scroll.routed();
+        Jet.module.Scroll.routed();
       }
     }
   })

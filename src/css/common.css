@@ -254,6 +254,7 @@ pre{
   background-color: #444;
   color: #fff;
   word-wrap: break-word;
+  overflow-x: hidden;
 }
 .break-word{
   word-wrap: break-word;

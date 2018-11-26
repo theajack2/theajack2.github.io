@@ -1,4 +1,4 @@
-Jet.$define('Query',function(){
+Jet.define('Query',function(){
     var map=[{
         name:'Jet简介',
         url:'/intro',
@@ -57,8 +57,13 @@ Jet.$define('Query',function(){
     },{
         name:'name参数',
         url:'/intro/grammer',
-        intro:'设置name参数后可以通过 Jet.name 获取到Jet元素',
+        intro:'设置name参数后可以通过 Jet.comp[name] 获取到Jet元素',
         des:'name'
+    },{
+        name:'Jet.root:根组件',
+        url:'/intro/grammer',
+        intro:'root.js 或 root.html 中声明的组件是Jet应用的根组件',
+        des:'root'
     },{
         name:'par参数',
         url:'/intro/grammer',
@@ -306,22 +311,26 @@ Jet.$define('Query',function(){
         url:'/attr/path',
         intro:'设置资源文件的加载方式',
     },{
-        name:'加载依赖',
+        name:'js库',
         url:'/lib',
-        intro:'加载项目所需依赖',
+        intro:'加载项目所需js库',
     },{
         name:'官方库和第三方库',
         url:'/lib/part',
         intro:'官方库和第三方库',
     },{
-        name:'$use()',
+        name:'use()',
         url:'/lib/use',
         intro:'加载官方库和其他第三方库',
     },{
-        name:'$useAll()',
+        name:'use.all()',
         url:'/lib/use',
         intro:'加载所有官方库和其他第三方库',
         des:'useAll'
+    },{
+        name:'use.define()',
+        url:'/lib/define',
+        intro:'定义三方库和库之间的依赖关系',
     },{
         name:'表单验证',
         url:'/valid',
@@ -488,15 +497,15 @@ Jet.$define('Query',function(){
         url:'/module',
         intro:'js异步模块加载规范',
     },{
-        name:'$define',
+        name:'define',
         url:'/module/define',
         intro:'定义模块',
     },{
-        name:'$export',
+        name:'export',
         url:'/module/export',
         intro:'输出模块',
     },{
-        name:'$import',
+        name:'import',
         url:'/module/import',
         intro:'引入模块',
     },{
@@ -515,11 +524,11 @@ Jet.$define('Query',function(){
         intro:'使用new关键字加载一个独立的模块',
         des:'new'
     },{
-        name:'$module',
+        name:'module',
         url:'/module/module',
         intro:'已引入的模块集合',
     },{
-        name:'$get',
+        name:'get',
         url:'/module/get',
         intro:'使用模块',
     },{
@@ -703,7 +712,7 @@ Jet.$define('Query',function(){
         url:'/code',
         intro:'在线使用和调试Jet',
     }]
-    Jet.$export({
+    Jet.export({
         search:function(s){
             return map.filter(function(item){
                 return item.name.toLowerCase().has(s.toString().toLowerCase())||item.intro.toLowerCase().has(s.toString().toLowerCase());
