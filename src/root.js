@@ -1,4 +1,5 @@
 window.$J=Jet.$;
+
 JET({
     beforeinitawait: function (next) {
       JUI.CODE.tab = '    '; 

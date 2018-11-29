@@ -1,10 +1,20 @@
 <style>
+
   #rootApp {
     -webkit-overflow-scrolling: touch;
     padding-top: 5px;
   }
+  @media screen and (max-width: 600px) {
+    body {
+      font-size: 40px;
+    }
+    ::-webkit-scrollbar {
+      width:0px;
+    }
+  }
+
 </style>
-<div id='rootApp' jdom='root' jstyle="overflow-y:{{$.bodyFix}}?'hidden':'auto';height:{{$.height}}">
+<div id='rootApp' class='bg-c' jdom='root' jstyle="overflow-y:{{$.bodyFix}}?'hidden':'auto';height:{{$.height}}">
   <i class="j-icon icon-bars menu-bar" jon='this.showMenu=true'></i>
   <div id="menu" jattr='class:({{$.showMenu}})?"open":""' jif='showMenuInPc:class[|pc-hide]'>
     <i class="j-icon icon-chevron-left icon-pc-show-menu" jif='showMenuInPc:class[|pc-hide]' jon='this.showMenuInPc=!this.showMenuInPc'></i>
@@ -24,3 +34,5 @@
   <div jattr='class:({{$.showMenu}})?"menu-bar-cover open":"menu-bar-cover"' jon='this.showMenu=false'></div>
 </div>
 <script src='root.js' jpath='false'></script>
+
+

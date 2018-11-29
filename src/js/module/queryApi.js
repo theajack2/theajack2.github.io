@@ -21,6 +21,16 @@ Jet.define('Query',function(){
         url:'/intro/contents',
         intro:'介绍Jet项目的目录结构。'
     },{
+        name:'config.js',
+        url:'/intro/contents',
+        intro:'介绍config.js文件',
+        des:'config'
+    },{
+        name:'build.config.json',
+        url:'/intro/contents',
+        intro:'介绍build.config.json文件',
+        des:'build.config'
+    },{
         name:'HTML模板',
         url:'/intro/html',
         intro:'Jet的HTML模板使用的html后缀的文件，语法与普通的html一样。',
@@ -31,7 +41,7 @@ Jet.define('Query',function(){
         intro:'src只需要指定图片的名称即可',
         des:'img'
     },{
-        name:'scoped',
+        name:'scoped属性',
         url:'/intro/html',
         intro:'css样式是否只在当前页面中生效',
         des:'scoped'
@@ -319,6 +329,14 @@ Jet.define('Query',function(){
         url:'/lib/part',
         intro:'官方库和第三方库',
     },{
+        name:'babel',
+        url:'/lib/babel',
+        intro:'官方 babel 库,es6转es5',
+    },{
+        name:'less',
+        url:'/lib/less',
+        intro:'官方 less 库,less转css',
+    },{
         name:'use()',
         url:'/lib/use',
         intro:'加载官方库和其他第三方库',
@@ -331,6 +349,11 @@ Jet.define('Query',function(){
         name:'use.define()',
         url:'/lib/define',
         intro:'定义三方库和库之间的依赖关系',
+    },{
+        name:'js库的弱依赖',
+        url:'/lib/define',
+        intro:'定义库之间的弱依赖关系',
+        des:'weekdep',
     },{
         name:'表单验证',
         url:'/valid',
@@ -523,6 +546,11 @@ Jet.define('Query',function(){
         url:'/module/import',
         intro:'使用new关键字加载一个独立的模块',
         des:'new'
+    },{
+        name:'no-babel: 前缀',
+        url:'/module/import',
+        intro:'禁用 babel 转译模块',
+        des:'noBabel'
     },{
         name:'module',
         url:'/module/module',

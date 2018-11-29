@@ -39,12 +39,24 @@
             if (str.indexOf('.') == -1) {
                 file = str + def;
             }
+        } else if (type == 'css') {
+            if (str.substring(str.length - 5) === '.less') {//less
+                if (!C._canUse('less') || Jet.config.less === false) {//使用jet-build的开发环境
+                    file = str.substring(0, str.length - 5) + '.css';
+                } else {
+                    file = str;
+                }
+            } else {
+                if (str.substring(str.lastIndexOf('.')) !== def) {
+                    file = str + def;
+                }
+            }
         } else {
             if (str.substring(str.lastIndexOf('.')) !== def) {
                 file = str + def;
             }
         }
-        if(Jet.router)
+        if (Jet.router)
             return Jet.router.conf[type] + Jet.__base__._dealSrc(file);
         return C._dealSrc(file);
     }

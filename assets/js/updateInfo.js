@@ -200,8 +200,14 @@ jpath 是否使用jet的path机制，默认为true。如不使用，则默认使
     (*重要) 完成jet 脚手架工具 jet-js-cli
     (*重要) Jet.use.define*() 声明第三方库的模块和模块之间的依赖 
         module 和 rely 两个参数
-
-  需修改 css scope 属性
+  11-27
+    (*重要) 新增 babel 和 less的支持，并加入了官方库，只要是 引入了babel或less，就自动将项目中的所有js或css文件进行相应的处理
+    新增 jbabel和jless 属性
+    新增 模块 前缀 no-babel:
+    use.all 方法 参数可以是 '-lib' 表示排除某个官方库
+    Jet.canUse() ,检测某个模块是否可用
+    完善scoped属性
+  
   需完善 组件销毁的生命周期
   
   需将外围设施部署成 npm包

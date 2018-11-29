@@ -11,7 +11,7 @@
         _dynamic_name = 'F';//为了保证上一个组件unmounted之后还可以进入端点
     var C = Jet.__base__;
     Jet.__base__._useList.push('router');
-    var _JT = C._JT, __ROOT = C.__ROOT;
+    var _JT = C._JT, __ROOT = C.__ROOT,_ssid=C._scoped_style_id;
 
     function _initRoot() {
         _JT.id(__ROOT)._JT_exist(function (root) {
@@ -180,9 +180,9 @@
         },
         back: function () { window.history.back() },
         forward: function () { window.history.forward() },
-        clearScoped: function () {
-            _JT.cls(C._scopeStyle)._JT_remove();
-        },
+        // clearScoped: function () {
+        //     _JT.cls(C._scopeStyle)._JT_remove();
+        // },
         activeRouter: function (item) {
             item = item || _JT.attr(_route + '="' + Jet.router.url + '"');
             if (item._JT_exist()) {
@@ -261,7 +261,7 @@
                     Jet.router.__xhr = _JT.load(C._getSrc(file, 'html'), function (html) {
                         Jet.router.__xhr = null;
                         var out = Jet.router._initRouterOut()._JT_html(html);
-                        Jet.router.clearScoped();
+                        //Jet.router.clearScoped();
                         if ('undefined' != typeof JUI) {
                             JUI._jui_mounted = [];
                         }
@@ -375,6 +375,7 @@
     function _removeFromJets(item) {
         var name = item._tools.name;
         _exeFunc(item._tools._onunmounted);
+        _JT.attr(_ssid+'=s'+item._tools._ele[_ssid])._JT_remove();
         _clearRouteFunc('__onroute', name);
         _clearRouteFunc('__onrouted', name);
         if (Jet.comp[name] && Jet.comp[name].$DOM) {
@@ -457,6 +458,7 @@
         scripts._JT_each(function (item, i) {
             if (item._JT_hasAttr("src")) {
                 _JT.load(C._getSrc(item._JT_attr("src"), 'js'), function (src) {
+                    src=C._babel(src);
                     txt[i + 1] = dealParJet(src);
                     if (i == index) {
                         script._JT_html(txt.join(''));
@@ -464,7 +466,8 @@
                     }
                 });
             } else {
-                txt[i + 1] = dealParJet(item._JT_html());
+                var src=C._babel(item._JT_html());
+                txt[i + 1] = dealParJet(src);
             }
             item._JT_remove();
         });
@@ -476,12 +479,12 @@
     function _loadStyle(out) {
         if (!C._isUd(Jet.__css_conf) && C._isUd(Jet.__css_conf.conf)) {
             Jet.__css_conf._reloadCssConf(function () {
-                C._loadStyleCall(out, Jet.router.path);
+                C._loadStyleCall(out, Jet.router.path,true);
             });
         } else {
             if (!C._isUd(Jet.__css_conf))
                 Jet.__css_conf.xhr = undefined
-            C._loadStyleCall(out, Jet.router.path);
+            C._loadStyleCall(out, Jet.router.path,true);
         }
     }
 

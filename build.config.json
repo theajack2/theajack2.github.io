@@ -1,12 +1,14 @@
 {
-  "name": "jet-api",
+  "name": "{{name}}",
   "version": "1.0.0",
-  "description": "Jet-api document",
-  "author": "theajack",
+  "description": "{{description}}",
+  "author": "{{author}}",
   "jetConfig": {
     "compressHtml": true,
     "compressCss": true,
     "compressJs": true,
-    "buildJsWithBabel": false
+    "buildJsWithBabel": false,
+    "buildCssWithLess": false,
+    "commonLess":false
   }
 }

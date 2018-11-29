@@ -1,4 +1,4 @@
-<style>
+<style jless='false'>
     .single-value{
         color:((themeColor))
     }
@@ -20,6 +20,10 @@
 <div class="sub">
     <div class='text'>
         variable属性用于定义css公共变量和函数。然后开发者可以在/src/css/common.css文件和 /src/html/目录下的所有html模板中使用css变量和方法。
+    </div>
+    <div class='text'>
+        但是很遗憾，由于less对Jet定义的 公共变量和函数的语法不支持，会在编译的时候异常甚至报错，所以less与 Jet的css变量和函数体系的语法 不能同时用于同一个css标签或文件内。
+        若是你在引入了less的情况下想使用 Jet的css变量体系，那么在使用的 style上使用 jless='false' 来禁用less。
     </div>
     <div class='title' jump-des='var'>1.css变量</div>
     <div class='text'>
@@ -44,7 +48,7 @@
         </div>
         使用双重小括号 <span class="red">(())</span>来使用css变量：
         <div class='j-code not-test' disabled width='99%' height='auto'>
-&lt;style>
+&lt;style jless='false'>
     .single-value{
         color:((themeColor))
     }
@@ -90,7 +94,7 @@
         </div>
         common.css或者html模板中使用：
         <div class='j-code not-test' disabled width='99%' height='auto'>
-&lt;style>
+&lt;style jless='false'>
     .border1{
         ((border['3px']))
     }

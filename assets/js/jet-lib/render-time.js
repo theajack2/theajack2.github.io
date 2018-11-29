@@ -9,6 +9,8 @@
         list:[],
         routerInit:true,
         start:function(){
+          if(Jet.config.env==='pro')
+            return
           var d=new Date();
           if(C._initDate!==null){
             C._info('Jet初始化时间：'+(d-C._initDate)+'ms.');
@@ -26,6 +28,8 @@
           },500)
         },
         end:function(jet,ele){
+          if(Jet.config.env==='pro')
+            return
           var d=new Date();
           if(ele==C.__router_comp){
             if(this.routerInit){
@@ -49,7 +53,9 @@
           }
         },
         log:function(){
-            C._info('渲染时间和：'+this.time+'ms. '+JSON.stringify(this.list));
+          if(Jet.config.env==='pro')
+            return
+          C._info('渲染时间和：'+this.time+'ms. '+JSON.stringify(this.list));
         }
       }
 })();

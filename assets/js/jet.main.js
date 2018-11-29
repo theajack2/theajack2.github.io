@@ -5,11 +5,12 @@
   var _bind = "J", _for = "Jfor", _input = "Jinput", _text = "Jtext", _if = "Jif", _on = "Jon", _run = "Jrun", _attr = "Jattr", _style = "Jstyle", _show = "Jshow", _root = 'Jroot',
     _each = "$each", _value = "$value", _index = "$index", _dom = 'jdom', _html = 'jhtml',
     _reg = new RegExp("({{)((.|\\n)*?)(}})", "g"), _numReg = new RegExp("(\\[)((.|\\n)*?)(\\])", "g"),
+    _scopedReg = new RegExp("(})((.|\\n)*?)({)", "g"),_cssNote = new RegExp("(\\/\\*)((.|\\n)*?)(\\*\\/)", "g"),_mutli_blank=new RegExp("  +", "g");
     _props = 'props', _dataPrefix = ':', _dataClonePrefix = '::', _funcPrefix = '@',
     __jet_id = 0, __ele_id = 0, __comp_id = 'comp__id', __jet_root = '_root', __router_comp = '$routerComp', __comp_name = 'name',
 
     __ROOT = 'JET_ROOT',
-    _scopeStyle = "JscopeStyle",
+    // _scopeStyle = "JscopeStyle",
     _lang = 'Jlang'
   //*********定义全局变量 结束 *******************/
 
@@ -1844,17 +1845,17 @@
   _initJetEnvir();
   function _initJetEnvir() {
     _initCommonStyle();
-    _initJetGlobalStyle();
+    //_initJetGlobalStyle();
     _initJetJStyles();
   }
-  function _initJetGlobalStyle() {
-    var gs = _JT.ct("style")._JT_attr({
-      type: "text/css",
-      id: "JglobalStyle"
-    });
-    gs._styles = [];
-    _JT.tag('head')._JT_append(gs);
-  }
+  // function _initJetGlobalStyle() {
+  //   var gs = _JT.ct("style")._JT_attr({
+  //     type: "text/css",
+  //     id: "JglobalStyle"
+  //   });
+  //   gs._styles = [];
+  //   _JT.tag('head')._JT_append(gs);
+  // }
   function _initJetJStyles() {
     document.head._JT_append(_JT.ct("style")._JT_attr({
       "type": "text/css",
@@ -2123,10 +2124,19 @@
   }; Jet.prototype.$cookie = _cookie;
   Jet.prototype.$storage = _storage;
   Jet.prototype.$ajax = function (opt) {
-    if (opt.base != false && Jet.prototype.$ajax.base !== undefined) {
+    if (opt.base !== false && Jet.prototype.$ajax.base !== undefined) {
       opt.url = Jet.prototype.$ajax.base + opt.url;
     }
     Jet.prototype.$ajax.xhr = _ajax(opt);
+    return Jet.prototype.$ajax.xhr;
+  };
+  Jet.prototype.$ajax.load =  function (url,call,ecall) {
+    if(url[0]==='@'){
+      url=url.substring(1);
+    }else if(Jet.prototype.$ajax.base !== undefined){
+      url=Jet.prototype.$ajax.base+url;
+    }
+    Jet.prototype.$ajax.xhr = _load(url, call, ecall);
     return Jet.prototype.$ajax.xhr;
   };
   Jet.prototype.$ajax.get = function (url, data, sc, fc) {
@@ -2780,6 +2790,7 @@
       scripts._JT_each(function (item, i) {
         if (item._JT_hasAttr("src")) {
           _JT.load(_getSrc(item._JT_attr("src"), 'js',item), function (src) {
+            src=_babel(src,item);
             txt[i + 1] = dealParJet(src);
             sourceSrc[i + 1] = src;
             if (i == index) {
@@ -2788,8 +2799,9 @@
             }
           });
         } else {
-          txt[i + 1] = dealParJet(item._JT_html());
-          sourceSrc[i + 1] = item._JT_html();
+          var src=_babel(item._JT_html(),item);
+          txt[i + 1] = dealParJet(src);
+          sourceSrc[i + 1] = src;
         }
         item._JT_remove();
       });
@@ -2826,57 +2838,58 @@
       _loadStyleCall(out, attr);
     }
   }
-  var _globalStyle = "JglobalStyle";
-  function _replaceCssVar(css) {
+  var _globalStyle = "JglobalStyle",_scoped_id='jet-scoped-id',_sid_index=0;
+  function _replaceCssVar(css,item) {
+    if(item&&item._JT_attr('jless')!=='false'&&_canUse('less')){
+      return css;
+    }
     if (Jet.__css_conf) {
       return Jet.__css_conf._replaceCssVar(css);
     }
     return css;
   }
-  function _loadStyleCall(out, attr) {
-    var gStyle = _JT.id(_globalStyle);
-    var scopeCss = _addScopeCss(attr, out);
+  function _loadStyleCall(out, attr,route) {
+    // var gStyle = _JT.id(_globalStyle);
+    var style = _addScopeCss(attr, out);
+    if(style===null){
+      return;
+    }
     var txt = [];
-    var scopeTxt = [];
+    // var scopeTxt = [];
     var styles = out._JT_findTag("style")._JT_toArray(false);
     var cssTotal = styles.length;
     var cssCount = 0;
     styles._JT_each(function (item, i) {
-      var isScope = (item._JT_attr('scoped') !== 'false');
-      if (isScope || (!isScope && gStyle._styles.indexOf(attr) === -1)) {
-        if (!isScope) gStyle._styles.push(attr);
-        if (item._JT_hasAttr("src")) {
-          _JT.load(_getSrc(item._JT_attr("src"), 'css',item), function (css) {
-            if (isScope) {
-              scopeTxt[i] = _replaceCssVar(css);
-            } else {
-              //if(!cssExist)
-              txt[i] = _replaceCssVar(css);
-            }
-            cssCount++;
-            _checkLoadStyles(cssCount, cssTotal, gStyle, scopeCss, txt, scopeTxt)
-            item._JT_remove();
-          });
-        } else {
-          if (isScope) {
-            scopeTxt[i] = _replaceCssVar(item._JT_html());
-          } else {
-            //if(!cssExist)
-            txt[i] = _replaceCssVar(item._JT_html());
+      var isScope = (!item._JT_hasAttr('scoped')||item._JT_attr('scoped') !== 'false');//默认scoped=false
+        // if (!isScope) gStyle._styles.push(attr);
+      if (item._JT_hasAttr("src")) {
+        _JT.load(_getSrc(item._JT_attr("src"), 'css',item), function (css) {
+          css=_less(css,item);
+          txt[i]={
+            css:_replaceCssVar(css,item),
+            scoped:isScope
           }
           cssCount++;
-          _checkLoadStyles(cssCount, cssTotal, gStyle, scopeCss, txt, scopeTxt)
+          _checkLoadStyles(out,cssCount, cssTotal, style, txt)
           item._JT_remove();
-        }
+        });
       } else {
+        var css=_less(item._JT_html(),item);
+        txt[i]={
+          css:_replaceCssVar(css,item),
+          scoped:isScope
+        }
         cssCount++;
+        _checkLoadStyles(out,cssCount, cssTotal, style, txt)
         item._JT_remove();
       }
     });
-    if (Jet.__css_conf) {
+    if (Jet.__css_conf&&route) {
       Jet.__css_conf._loadCommonCss();
     }
   }
+
+  var _scoped_style_id='_scoped_style_id',_scoped_style_index=0;
   function _addScopeCss(attr, out) {
     if (out._JT_attr('id') === __ROOT) {
       var s = _JT.ct('style')._JT_attr({
@@ -2884,28 +2897,101 @@
         'RootStyle': ''
       });
     } else {
+      if(_JT.attr('scope-src="'+attr+'"')._JT_exist()){
+        return null;
+      }
+      out[_scoped_style_id]=_scoped_style_index++;
       var s = _JT.ct('style')._JT_attr({
-        'class': _scopeStyle,
+        // 'class': _scopeStyle,
         'type': 'text/css',
-        'scope-src': attr
+        'scope-src': attr,
+        '_scoped_style_id':'s'+_scoped_style_index
       });
     }
     return s;
   }
-  function _checkLoadStyles(cssCount, cssTotal, gStyle, scopeCss, txt, scopeTxt, cssExist) {
+  function _checkLoadStyles(out,cssCount, cssTotal, style, txt) {//, cssExist
     if (cssCount == cssTotal) {
-      //if(!cssExist){
+      var css='';
       if (txt.length > 0) {
-        gStyle._JT_html(gStyle.innerHTML + txt.join(''));
-      }
-      //}
-      if (scopeTxt.length > 0) {
-        scopeCss._JT_html(scopeTxt.join(''))
-        _JT.tag('head').append(scopeCss);
+        txt.forEach(function(item){
+          if(item.scoped){
+            css+=_rewriteScopeCss(out,item.css);
+          }else{
+            css+=_removeBlanks(item.css);
+          }
+        })
+        style._JT_html(css)
+        _JT.tag('head').append(style);
       }
     }
   }
 
+  function _less(str,item){
+    if(Jet.config.less&&_canUse('less')&&(!item||item._JT_attr('jless')!=='false'))
+      return Jet.less.toCss(str)
+    return str;
+  }
+  function _babel(str,item){
+    if(Jet.config.babel&&_canUse('babel')&&(!item||item._JT_attr('jbabel')!=='false'))
+      return Jet.babel.toEs5(str)
+    return str;
+  }
+  function _rewriteScopeCss(ele,css){//return css;
+    if(css.trim()===''){
+      return css;
+    }
+    var id=ele._JT_attr(_scoped_id);
+    if(!id){
+      id=_sid_index++;
+      ele._JT_attr(_scoped_id,'s'+_sid_index);
+    }
+    // if(_canUse('less')){
+    //   css='['+_scoped_id+'=s'+_sid_index+']{'+css+'}';
+    //   return Jet.less.toCss(css);
+    // }else{
+      return _addScopedCss(css);
+      // css=css.trim();
+      // var selector='['+_scoped_id+'=s'+_sid_index+'] ';
+      // css=css._JT_replaceAll('}','}'+selector)
+      // css=selector+css.substring(0,css.lastIndexOf(selector))
+      // return css
+    // }
+  }
+  function _addScopedCss(css){//without less
+    css=_removeNote(css);
+    var preFix='['+_scoped_id+'=s'+_sid_index+'] ';
+    css=css.trim();
+    css='}'+css;
+    var newCss='';
+    var arr=css.match(_scopedReg)
+    arr.forEach(function(item){
+      if(item.indexOf('@')!==-1||item.indexOf('%')!==-1){//含有功能 或 动画
+        if(item.indexOf('@media')!==-1){//媒介查询
+          newCss=item+preFix;
+        }
+      }else{
+        var val=item.substring(1,item.length-1)._JT_replaceAll(';','').trim();
+        if(val!=='to'){//排除css 动画 from和0 有两个左大括号
+          var _i=item.indexOf('}'),_li=item.lastIndexOf('}')
+          if(_i!==_li){//有两个 右括号
+            newCss=item.substring(0,_li)+'}'+preFix+item.substring(_li+1)
+          }else{
+            newCss=item.replace('}','}'+preFix);
+          }
+        }
+      }
+      if(newCss!=='')
+        css=css.replace(item,newCss);
+    })
+    return _removeBlanks(css.substring(1));
+  }
+  function _removeNote(css){
+    return css.replace(_cssNote,'')
+  }
+  function _removeBlanks(css){
+    return css.replace(_mutli_blank,' ')
+  }
 
   /*bind*********************************************************************************/
   Jet.Bind = function (opt) {
@@ -4182,9 +4268,10 @@
   Jet.Show = Jet.If;
 
   //管理库加载
-  var _libList = ['render-time','router', 'css-config', 'res', 'valid', 'lang', 'module','tool','jui'];//系统模块
+  var _libList = ['render-time','router', 'css-config', 'res', 'valid', 'lang', 'module','tool','jui','less','babel'];//系统模块
   var _depends={
     'jui':['tool'],
+    'css-config':['@less','@babel'],
   }//库依赖映射
   var _dependsLib,//需要加载依赖的库集合
     _beDepends;//库依赖的相反映射
@@ -4196,18 +4283,36 @@
   var _use_call=[];//加载成功回调函数（序号），
   var _use_time=[];//加载起始时间（序号），
 
+  function _checkWeekDepend(depend,bedepend){
+    if(_isWeekDe(bedepend)){
+      return {
+        week:true,
+        depend:'@'+depend,
+        bedepend:bedepend.substring(1)
+      }
+    }else{
+      return {
+        week:false,
+        depend:depend,
+        bedepend:bedepend
+      }
+    }
+
+  }
   function _initDepends(){
     _dependsLib=[];
     _beDepends={}
     for(var k in _depends){
       _checkIsLib(k);
       _dependsLib.push(k);
-      _depends[k].forEach(function(depend){
-        _checkIsLib(depend);
-        if(!_beDepends[depend]){
-          _beDepends[depend]=[k]
+      _depends[k].forEach(function(bedepend){
+        var o=_checkWeekDepend(k,bedepend);
+        bedepend=o.bedepend;
+        _checkIsLib(bedepend);
+        if(!_beDepends[bedepend]){
+          _beDepends[bedepend]=[o.depend]
         }else{
-          _beDepends[depend].push(k);
+          _beDepends[bedepend].push(o.depend);
         }
       })
     }
@@ -4222,25 +4327,68 @@
     for(var k in _depends){
       if(list.indexOf(k)!==-1){
         _depends[k].forEach(function(depend){
-          if(!_canUse(depend)&&list.indexOf(depend)==-1){
-            list.push(depend);
-            _info(k+' 依赖 '+depend+',已自动添加依赖')
+          if(!_isWeekDe(depend)){
+            if(!_canUse(depend)&&list.indexOf(depend)==-1){
+              list.push(depend);
+              if(Jet.config.env!=='pro')
+                _info(k+' 依赖 '+depend+',已自动添加依赖')
+            }
           }
         })
       }
     }
   }
-  function _needDepend(name){
-    return typeof _depends[name]!=='undefined'
+  function _isWeekDe(l){
+    return l[0]=='@';
   }
+  function _fixLib(l){
+    if(_isWeekDe(l)){
+      return l.substring(1)
+    }
+    return l;
+  }
+  //是否需要加载其他依赖
+  function _needDepend(name,index){
+    if(typeof _depends[name]==='undefined'){
+      return false;
+    }
+    var list=_load_list[index];
+    var wl=[];
+    for(var i=0;i<_depends[name].length;i++){
+      var n=_depends[name][i]
+      if(_isWeekDe(n)){
+        wl.push(_fixLib(n));
+      }else{
+        return true;//只要有一个强依赖
+      }
+    }
+    for(var i=0;i<wl.length;i++){
+      if(list.indexOf(wl[i])!==-1){
+        return true;//弱依赖只要有一个在当前加载列表中
+      }
+    }
+    return false;//没有强依赖，且弱依赖也不再当前列表中
+  }
+  //加载依赖于name的依赖
   function _loadBeDepends(name,index){
-    if(!_beDepends[name]){
+    if(!_beDepends[name]){//如果没有被依赖项
       return;
     }
     _beDepends[name].forEach(function(bedepend){
+      bedepend=_fixLib(bedepend);
+      var list=_load_list[index];
       for(var i=0;i<_depends[bedepend].length;i++){
-        if(bedepend!==name&&!_canUse(_depends[bedepend][i])){
-          return;
+        var depend=_depends[bedepend][i];
+        var _w=_isWeekDe(depend);
+        depend=_fixLib(depend);
+        if(_w){
+          if(bedepend!==name&&!_canUse(depend)&&list.indexOf(depend)!==-1){//若果被依赖项的依赖项没有加载完且被依赖项在当前加载列表中就不加载被依赖项
+            return;
+          }
+        }else{//强依赖
+          if(bedepend!==name&&!_canUse(depend)){//若果被依赖项的依赖项没有加载完就不加载被依赖项
+            return;
+          }
         }
       }
       if(!_canUse(bedepend)&&_load_list[index].indexOf(bedepend)!==-1){
@@ -4261,14 +4409,13 @@
     _use_call[index] = func;
     _use_time[index] = new Date();
     _load_list[index].forEach(function (name, i) {
-      if(!_needDepend(name)){
+      if(!_needDepend(name,index)){
         _loadSingleLib(name,index);
       }
     })
   }
   function _loadSingleLib(name,index) {
     var src = name;
-    Jet.use.list.push(name);
     if (_libList.indexOf(name) !== -1) {
       src = 'assets/js/jet-lib/' + name + '.js';
     }else if(_defineLibs[name]){
@@ -4278,6 +4425,7 @@
       'src': src
     });
     script.onload=function(){
+      Jet.use.list.push(name);
       _loadBeDepends(name,index);
       Jet.use._regist(name,index)
     }
@@ -4285,14 +4433,29 @@
   }
   Jet.use = function () {
     _use_index++;
-    var args = arguments;
+    var args = ArrProto.splice.call(arguments, 0);
+    var back=[];
+    for(var i=args.length-1;i>=0;i--){
+      if(back.indexOf(args[i])==-1){
+        back.push(args[i]);
+      }else{
+        args._JT_removeByIndex(i)
+      }
+    }
+    if(Jet.config.babel==false&&args.indexOf('babel')!==-1){
+      args._JT_removeByIndex(args.indexOf('babel'))
+    }
+    if(Jet.config.less==false&&args.indexOf('less')!==-1){
+      args._JT_removeByIndex(args.indexOf('less'))
+    }
     var call = null;
     var list=[];
     var otherList = [];
     for (var i = 0; i < args.length; i++) {
       if (typeof args[i] === 'string') {
         if(Jet.use.list.indexOf(args[i])!==-1){
-          _info('已经加载过该依赖：'+args[i]+'.本次加载跳过')
+          if(Jet.config.env!='pro')
+            _info('已经加载过该依赖：'+args[i]+'.本次加载跳过')
         }else{
           var index = _libList.indexOf(args[i]);
           if (index !== -1) {
@@ -4320,9 +4483,33 @@
     _load_list[_use_index]=list;
     _loadLibs(call,_use_index);
   };
+  Jet.canUse=_canUse;
+  Jet.config={
+    babel:true,
+    less:true,
+    env:'dev'
+  }
   Jet.use.all = function () {
     var args = ArrProto.splice.call(arguments, 0);
-    ArrProto.unshift.apply(args, _libList)
+    var notuse=[];
+    for(var i=args.length-1;i>=0;i--){
+      var lib=args[i];
+      if(typeof lib==='string'&&lib[0]=='-'){
+        notuse.push(lib.substring(1));
+        args._JT_removeByIndex(i);
+      }
+    }
+    if(notuse.length>0){
+      var _list=[];
+      _libList.forEach(function(lib){
+        if(notuse.indexOf(lib)===-1){
+          _list.push(lib);
+        }
+      })
+      ArrProto.unshift.apply(args, _list)
+    }else{
+      ArrProto.unshift.apply(args, _libList)
+    }
     Jet.use.apply(null,args);
   };
   Jet.use.define=function(opt){
@@ -4357,7 +4544,8 @@
         _use_call[index](times);
         _use_call[index] = undefined;
       }
-      _info('第'+(index+1)+'轮依赖加载完成！[' + times + 'ms]')
+      if(Jet.config.env!='pro')
+        _info('第'+(index+1)+'轮依赖加载完成！[' + times + 'ms]')
     }
   }
   Jet.use.list = [];
@@ -4374,10 +4562,11 @@
     _jpath: _jpath,
     __ROOT: __ROOT,
     __comp_id: __comp_id,
-    _scopeStyle: _scopeStyle,
+    _scoped_style_id: _scoped_style_id,
     __jet_root: __jet_root,
     __router_comp: __router_comp,
     _loadStyleCall: _loadStyleCall,
+    
     _loadCompRes: _loadCompRes,
     _initSingleLoad: _initSingleLoad,
     __router_comp:__router_comp,
@@ -4389,7 +4578,9 @@
     _checkFunction: _checkFunction,
     _getSrc:_getSrc,
     _canUse:_canUse,
-    _initValidAndLang:_initValidAndLang
+    _initValidAndLang:_initValidAndLang,
+    _babel:_babel,
+    _less:_less,
   }
 })();
 

@@ -17,7 +17,7 @@
     var _numReg=new RegExp("(\\[)((.|\\n)*?)(\\])","g");
     var _commonStyle = "JcommonStyle",_COMMON_CSS='COMMON_CSS';
     var conf={};
-    conf.preloadCss=function(t,call){
+    conf.preloadCss=function(t){
       var m=t.match(new RegExp("(\\(\\()((.|\\n)*?)(\\)\\))","g"));
       if(m!==null){
         var vars=[];
@@ -45,28 +45,35 @@
           }
         });
       }
-      if(call){
-        call(t);
-      }
+    //   if(call){
+    //     call(t);
+    //   }
       return t.replace(/[\r\n]/g,"");
     };
     var o=document.createElement("style");
     o.setAttribute("type","text/css");
 
-    var common=document.getElementById('COMMON_CSS');
+    var common=document.getElementById(_COMMON_CSS);
+    var commonCssName='common.css'
     var url=common.href;
+    if(url.indexOf('src/css/common.less')!==-1){
+        commonCssName='common.less';
+    }
     //这里的url不能使用 /src/css，因为如果Jet router 设置了trueBase 则 /src 前面还有路径，所以这里让用户自己填写在link标签里
-    conf.xhr=_load(url.replace('common.css','css.conf'),function(res){
+    conf.xhr=_load(url.replace(commonCssName,'css.conf'),function(res){
       eval('Jet.__css_conf.conf='+res);
       _load(url,function(res2){
-        conf.preloadCss(res2,function(d){
-          var comStyle=o.cloneNode();
-          comStyle.innerHTML=d.replace(/[\r\n]/g,"");//去掉回车换行;
-          document.head.insertBefore(comStyle,common)
-          //document.head.appendChild(comStyle);
-          //document.head.removeChild(pre_style);
-          document.head.removeChild(common);
-        })
+        if(_JT.id(_COMMON_CSS)._JT_attr('jless')=='false'){
+            res2=conf.preloadCss(res2)
+        }else{
+            res2=C._less(res2);
+        }
+        var comStyle=o.cloneNode();
+        comStyle.innerHTML=res2;
+        document.head.insertBefore(comStyle,common)
+        //document.head.appendChild(comStyle);
+        //document.head.removeChild(pre_style);
+        document.head.removeChild(common);
       });
     });
     //add global css
@@ -95,7 +102,7 @@
                 _loadCommonCssCall(commonCss, length);
             } else {
                 item.forEach(function (_item) {
-                    _JT.load(Jet.res.getSrc(_item, 'css'), function (css) {
+                    _JT.load(C._getSrc(_item, 'css'), function (css) {
                         length--;
                         commonCss.push(css);
                         _loadCommonCssCall(commonCss, length);
@@ -105,16 +112,17 @@
         });
     }
     function _loadCommonCssCall(commonCss, length) {
+        var _c=_JT.id(_COMMON_CSS)
         if (length == 0) {
             if (commonCss.length > 0) {
                 if (_JT.id(_commonStyle)._JT_exist()) {
                     if (commonCss.join('') != _JT.id(_commonStyle).innerHTML) {
-                        _JT.id(_commonStyle)._JT_html(commonCss.join(''))
+                        _JT.id(_commonStyle)._JT_html(C._less(commonCss.join(''),_c))
                     }
                     // }else if(_JT.id(_routeStyle)._JT_exist()){
                     //   document.head.insertBefore(_JT.ct('style')._JT_attr('id',_commonStyle)._JT_html(commonCss.join('')),_JT.id(_routeStyle));
                 } else {
-                    document.head.appendChild(_JT.ct('style')._JT_attr('id', _commonStyle)._JT_html(commonCss.join('')));
+                    document.head.appendChild(_JT.ct('style')._JT_attr('id', _commonStyle)._JT_html(C._less(commonCss.join(''),_c)));
                 }
             } else {
                 _JT.id(_commonStyle)._JT_exist(function (item) {
@@ -129,15 +137,18 @@
         c.xhr = _JT.load(Jet.router.conf.css + '/css.conf', function (res) {
             eval('Jet.__css_conf.conf=' + res);
             c.xhr = undefined;
-            _JT.load(Jet.router.conf.css + '/common.css', function (res2) {
-                c.preloadCss(res2, function (d) {
-                    var comStyle = document.createElement('style');
-                    comStyle.innerHTML = d.replace(/[\r\n]/g, "");//去掉回车换行;
-                    document.head.insertBefore(comStyle, _JT.id(_COMMON_CSS));
-                    document.head.removeChild(_JT.id(_COMMON_CSS));
-                    c.preloadCss = undefined;
-                    call();
-                })
+            _JT.load(Jet.router.conf.css + '/'+commonCssName, function (res2) {
+                if(_JT.id(_COMMON_CSS)._JT_attr('jless')=='false'){
+                    res2=conf.preloadCss(res2)
+                }else{
+                    res2=C._less(res2);
+                }
+                var comStyle = document.createElement('style');
+                comStyle.innerHTML =res2;
+                document.head.insertBefore(comStyle, _JT.id(_COMMON_CSS));
+                document.head.removeChild(_JT.id(_COMMON_CSS));
+                c.preloadCss = undefined;
+                call();
             });
         });
     }

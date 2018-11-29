@@ -19,7 +19,7 @@
   if (!_loaded) {
     var _link = C._JT.ct('link')._JT_attr({
       rel: 'stylesheet',
-      href: 'https://www.theajack.com/jet/assets/css/jui.min.css',
+      href: 'https://www.jet-js.com/assets/css/jui.min.css',
     })
     _link.onload = function () {
       if (_loadedCall) {

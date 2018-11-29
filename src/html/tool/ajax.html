@@ -26,8 +26,13 @@ func:{
 });
     </div>
 
+    <div class='title'>$ajax.load()</div>
     <div class='text'>
-        使用$ajax除了可以与服务器端通信，还可以加载文件，请看一个例子：
+        使用$ajax除了可以与服务器端通信，还可以加载文件，不过必须在http服务器环境下才可以。可以使$ajax，也可以使用已经为开发者封装好的$ajax.load方法。
+        该方法支持三个参数，第一个参数是 请求文件的路径，第二个是成功的回调，第三个是失败的回调，第三个参数是可选的。请看一个例子：
+    </div>
+    <div class='text'>
+        关于第一个参数，若是设置了Jet.prototype.$ajax.base，那么load方法会自动将 参数前面拼接上base参数，若是您不希望进行这种拼接，请使用 @ 前缀 如 '@http://localhost...' 。请看一个例子：
     </div>
     <div class='j-code' disabled width='99%' height='auto'>
 &lt;button jon='loadFile'>点击加载文件&lt;/button>
@@ -44,12 +49,12 @@ new Jet({
             }
             var _this=this;
             this.js='正在加载中...';
-            this.$ajax({
-                url : 'https://www.theajack.com/jet/src/html/intro/contents.html', 
-                success : function(result){ 
+            this.$ajax.load(
+                '@https://www.jet-js.com/src/html/intro/contents.html', 
+                function(result){ 
                         _this.js=result
                 }
-            })
+            )
         }
     }
 });
@@ -88,7 +93,7 @@ new Jet({
     </div>
     <div class='title'>5.$ajax.abort()</div>
     <div class='text indent'>
-            $ajax.abort() 方法可以终止上一个发送的请求。
+            $ajax.abort() 方法可以终止上一个发送的请求。$ajax.load 也可以被该方法终止。
     </div>
 </div>    
 
@@ -103,12 +108,12 @@ new Jet({
                 }
                 var _this=this;
                 this.js='正在加载中...';
-                this.$ajax({
-                    url : 'https://www.theajack.com/jet/src/html/intro/contents.html', 
-                    success : function(result){ 
+                this.$ajax.load(
+                    '@https://www.jet-js.com/src/html/intro/contents.html', 
+                    function(result){ 
                             _this.js=result
                     }
-                })
+                )
             }
         }
     });

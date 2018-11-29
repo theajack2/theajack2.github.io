@@ -93,8 +93,9 @@
     Jet.prototype.$get = function (name) {
         return Jet.get(name);
     }
-    function _loadOneModule(src, key, isNew, call) {
+    function _loadOneModule(src, key, isNew,babel, call) {
         _JT.load(C._getSrc(src, 'js'), function (code) {
+            if(babel)code=C._babel(code);
             code = ('//# sourceURL=' + src + '\r\n' + code);
             _check_is_new = (isNew === false) ? false : true;
             if (call) {
@@ -117,6 +118,7 @@
     //加载模块 参数是模块名字，可以使用 as 来起别名，引入之后全局可用
     //若是之前已经引入过对应模块，则会在 Jet.module 中查找对应模块返回
     //最后一个参数是回调函数，可不填，回调参数是当前所有引入的模块的json对象
+    var _noBabel='no-babel:';
     Jet.import = function () {
         var n = arguments.length;
         var index = 0, callback = null, modules = _createEmpty();
@@ -126,6 +128,11 @@
         }
         for (var i = 0; i < n; i++) {
             var item = arguments[i];
+            var babel = true;
+            if(item.substring(0,_noBabel.length)==_noBabel){
+                item=item.substring(_noBabel.length);
+                babel=false;
+            }
             var isNew = _checkIsNewMod(item);//是否新建一个模块
             if (isNew !== false) {
                 item = isNew;
@@ -158,9 +165,8 @@
                 }
             } else {
                 _modules[src] = '__loading';
-                _loadOneModule(src, json.key, isNew, function (mod, key) {
+                _loadOneModule(src, json.key, isNew,babel, function (mod, key) {
                     if (callback !== null) {
-
                         index++;
                         modules[(item._JT_has(' as ') ? key : _export)] = mod;
                         if (index === n) {

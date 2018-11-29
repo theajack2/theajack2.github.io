@@ -33,6 +33,18 @@ Jet.use.all(function(){
     <div class='text indent'>
         其实use和use.all只是script标签的语法糖衣，您完全可以在index.html中手动插入script标签来实现同样的功能：
     </div>
+    <div class='title'>use.all 排除某些库</div>
+    <div class='text indent'>
+        当您希望安装所有的官方库除了其中一两个时，将剩余的需要的所有库都罗列出来显得代码有些累赘。这个时候您可以使用 '-name' 的格式来排除使用某些库，使用如下
+    </div>
+    <div class='j-code not-test' disabled width='99%' height='auto'>
+
+Jet.use.all(
+    '-jui','-less',//排除jui和less
+    function(){
+    
+})
+    </div>
 </div>
 <script>
     new Jet({

@@ -102,4 +102,11 @@ Jet.import('new(module1) as mym2','new(module2) as mym2',function(modules){
     //Jet.module={m1:模块一,m2:模块二}
 });
     </div>
+    <div class='title' jump-des='noBabel'>5.no-babel: 前缀</div>
+    <div class='text'>
+        当使用 babel库 之后，默认是会把所有的 模块都通过babel转译，但是若您不希望这样做，可以使用 no-babel: 前缀来禁止转译。使用如下。
+    </div>
+    <div class='j-code not-test' disabled width='99%' height='auto'>
+Jet.import('no-babel:module1');
+    </div>
 </div>

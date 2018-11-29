@@ -1,3 +1,8 @@
+.a{
+  .b{
+    color:#aaa;
+  }
+}
 ::-webkit-scrollbar {
   width:10px;
 }
@@ -254,7 +259,7 @@ pre{
   background-color: #444;
   color: #fff;
   word-wrap: break-word;
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
 }
 .break-word{
   word-wrap: break-word;
@@ -388,6 +393,9 @@ pre{
   display: none;
 }
 @media screen and (max-width: 600px) {
+  ::-webkit-scrollbar {
+    width:0px;
+  }
   .text{
     font-size: 15px;
   }
@@ -423,6 +431,7 @@ pre{
   #main{
     padding-left: 0px!important;
     padding-top: 45px;
+    overflow-x: hidden;
   }
 
   .footer-text{

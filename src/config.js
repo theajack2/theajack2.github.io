@@ -1,4 +1,10 @@
-
+/**
+ * babel 
+ * less
+ * config.js
+ * build.config.json
+ */
+//
 
 //'https://www.theajack.com/cnchar/cnchar.min.js',
 //Jet.use('/src/js/cnchar.js')
@@ -31,12 +37,14 @@
 // Jet.use('a',function(){
     
 // })
-
+// Jet.config.babel=false;
+//Jet.config.env='pro'
 Jet.use.all(
+    //'babel','less',
     //'cnchar',
     //'/src/js/cnchar.js',
     function (times) {
-        // Jet.router.setBase('/jet');
+        //Jet.router.setBase('/jet');
         Jet.lang.use(['cn', 'en']);
         Jet.res.define({
             image: {
@@ -111,6 +119,8 @@ Jet.use.all(
                     name: '/lib/index',
                     children: {
                         '/part': '/lib/part',
+                        '/babel': '/lib/babel',
+                        '/less': '/lib/less',
                         '/use': '/lib/use',
                         '/define': '/lib/define'
                     }
