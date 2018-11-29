@@ -5,7 +5,7 @@
   var _bind = "J", _for = "Jfor", _input = "Jinput", _text = "Jtext", _if = "Jif", _on = "Jon", _run = "Jrun", _attr = "Jattr", _style = "Jstyle", _show = "Jshow", _root = 'Jroot',
     _each = "$each", _value = "$value", _index = "$index", _dom = 'jdom', _html = 'jhtml',
     _reg = new RegExp("({{)((.|\\n)*?)(}})", "g"), _numReg = new RegExp("(\\[)((.|\\n)*?)(\\])", "g"),
-    _scopedReg = new RegExp("(})((.|\\n)*?)({)", "g"),_cssNote = new RegExp("(\\/\\*)((.|\\n)*?)(\\*\\/)", "g"),_mutli_blank=new RegExp("  +", "g");
+    _scopedReg = new RegExp("(})((.|\\n)*?)({)", "g"),_cssNote = new RegExp("(\\/\\*)((.|\\n)*?)(\\*\\/)", "g"),_mutli_blank=new RegExp("  +", "g"),
     _props = 'props', _dataPrefix = ':', _dataClonePrefix = '::', _funcPrefix = '@',
     __jet_id = 0, __ele_id = 0, __comp_id = 'comp__id', __jet_root = '_root', __router_comp = '$routerComp', __comp_name = 'name',
 
@@ -2841,12 +2841,16 @@
   var _globalStyle = "JglobalStyle",_scoped_id='jet-scoped-id',_sid_index=0;
   function _replaceCssVar(css,item) {
     if(item&&item._JT_attr('jless')!=='false'&&_canUse('less')){
-      return css;
+      return _removeLine(css);
     }
+    
     if (Jet.__css_conf) {
       return Jet.__css_conf._replaceCssVar(css);
     }
-    return css;
+    return _removeLine(css);
+  }
+  function _removeLine(css){
+      return css.replace(/[\r\n]/g, "");
   }
   function _loadStyleCall(out, attr,route) {
     // var gStyle = _JT.id(_globalStyle);
@@ -2963,28 +2967,41 @@
     var preFix='['+_scoped_id+'=s'+_sid_index+'] ';
     css=css.trim();
     css='}'+css;
-    var newCss='';
-    var arr=css.match(_scopedReg)
+    var newCss=[];
+    var arr=css.match(_scopedReg);
+    var unmatch=_getUnmatchs(css,arr);
     arr.forEach(function(item){
       if(item.indexOf('@')!==-1||item.indexOf('%')!==-1){//含有功能 或 动画
         if(item.indexOf('@media')!==-1){//媒介查询
-          newCss=item+preFix;
+          newCss.push(item+preFix);
+        }else{
+          newCss.push(item);
         }
       }else{
         var val=item.substring(1,item.length-1)._JT_replaceAll(';','').trim();
         if(val!=='to'){//排除css 动画 from和0 有两个左大括号
           var _i=item.indexOf('}'),_li=item.lastIndexOf('}')
           if(_i!==_li){//有两个 右括号
-            newCss=item.substring(0,_li)+'}'+preFix+item.substring(_li+1)
+            newCss.push(item.substring(0,_li)+'}'+preFix+item.substring(_li+1))
           }else{
-            newCss=item.replace('}','}'+preFix);
+            newCss.push(item.replace('}','}'+preFix));
           }
+        }else{
+          newCss.push(item);
         }
       }
-      if(newCss!=='')
-        css=css.replace(item,newCss);
     })
-    return _removeBlanks(css.substring(1));
+    var res=unmatch[0]
+    for(var i=0;i<newCss.length;i++){
+        res+=newCss[i]+unmatch[i+1];
+    }
+    return _removeBlanks(res.substring(1));
+  }
+  function _getUnmatchs(css,arr){
+      arr.forEach(function(item){
+          css=css.replace(item,'__split__');
+      })
+      return css.split('__split__');
   }
   function _removeNote(css){
     return css.replace(_cssNote,'')
