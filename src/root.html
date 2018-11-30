@@ -4,6 +4,12 @@
     -webkit-overflow-scrolling: touch;
     padding-top: 5px;
   }
+  .APP_Loading{
+    color: #eee;
+  }
+  .APP_Loading.loading{
+    color: #888;
+  }
   @media screen and (max-width: 600px) {
     body {
       font-size: 40px;
@@ -22,12 +28,15 @@
       <img class='logo-img' src="jet.png">JET
     </div>
     <div jload='@routerMenu' jonload='onmenuload'>
+      <div class='APP_Loading'><i class="j-icon icon-spinner-indicator icon-spin"></i></div>
     </div>
   </div>
   <div id="main" jif='showMenuInPc:class[|pc-hide]'>
     <div id='header' jload='@header' :show-menu='showMenu' @jump-to='jumpTo'>
     </div>
-    <div Jout id='routerOut' jdom='out'></div>
+    <div Jout id='routerOut' jdom='out'>
+      <div class='APP_Loading loading'><i class="j-icon icon-spinner-indicator icon-spin"></i></div>
+    </div>
     <div id='footer' jif='showMenuInPc:class[|pc-hide]' jload='@footer' jonload='onfooterload'>
     </div>
   </div>

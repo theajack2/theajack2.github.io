@@ -26,10 +26,12 @@
 //         a:'src/js/a.js',
 //         b:'src/js/b',//.js后缀可以省略
 //         c:'src/js/c',
+//         root:'src/root.js'
 //     },
 //     depend:{
 //         a:['b','c'],
-//         b:['c','tool']//也可以依赖官方库
+//         b:['c','tool'],//也可以依赖官方库
+//         root:['tool','jui']
 //     }
 // })
 
@@ -43,6 +45,7 @@ Jet.use.all(
     //'babel','less',
     //'cnchar',
     //'/src/js/cnchar.js',
+    
     function (times) {
         //Jet.router.setBase('/jet');
         Jet.lang.use(['cn', 'en']);
@@ -212,4 +215,5 @@ Jet.use.all(
                 '/code': 'code'
             }
         });
+        // Jet.use('root')
     });

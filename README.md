@@ -43,7 +43,6 @@ Jet组件包含的特性和Jet元素包含的修饰属性，为Jet应用赋予�
 </div>
 <script>
     new Jet({
-        name:'online',
         data:{
             message:'Hello Jet',
             user:{

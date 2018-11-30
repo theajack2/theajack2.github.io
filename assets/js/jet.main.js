@@ -480,7 +480,10 @@
     return arr;
   }
   function _initCommonStyle() {
-    _JT.tag("head")._JT_append(_JT.ct("style")._JT_txt(".jet-hide{display:none!important}.jet-unpass{border-color:#f20!important;border-style:solid!important;background-color:rgba(255,0,0,.1)!important;color:red!important}"));
+    _JT.tag("head")._JT_append(_JT.ct("style")._JT_attr({
+      'type':'text/css',
+      'style-type':'JetTool'
+    })._JT_txt(".jet-hide{display:none!important}.jet-unpass{border-color:#f20!important;border-style:solid!important;background-color:rgba(255,0,0,.1)!important;color:red!important}"));
   }
   //Jet*********************************************
   function _checkDataForLang(opt) {
@@ -2623,8 +2626,10 @@
         _dealLoadResult(html, item, _this, attr, i, list, call);
       });
     }
+  } 
+  function _initLoading(list){
+    
   }
-
   Jet.load = {
     __loadStore: {},
     init: function (obj, call) {
@@ -2646,6 +2651,7 @@
           call();
         return;
       }
+      _initLoading(list)
       list._JT_each(function (item, i) {
         _initSingleLoad(_this, item, i, list, call)
       });
@@ -2790,6 +2796,7 @@
       scripts._JT_each(function (item, i) {
         if (item._JT_hasAttr("src")) {
           _JT.load(_getSrc(item._JT_attr("src"), 'js',item), function (src) {
+            
             src=_babel(src,item);
             txt[i + 1] = dealParJet(src);
             sourceSrc[i + 1] = src;
@@ -2799,6 +2806,7 @@
             }
           });
         } else {
+          
           var src=_babel(item._JT_html(),item);
           txt[i + 1] = dealParJet(src);
           sourceSrc[i + 1] = src;
@@ -2838,7 +2846,7 @@
       _loadStyleCall(out, attr);
     }
   }
-  var _globalStyle = "JglobalStyle",_scoped_id='jet-scoped-id',_sid_index=0;
+  var _globalStyle = "JglobalStyle";
   function _replaceCssVar(css,item) {
     if(item&&item._JT_attr('jless')!=='false'&&_canUse('less')){
       return _removeLine(css);
@@ -2854,7 +2862,7 @@
   }
   function _loadStyleCall(out, attr,route) {
     // var gStyle = _JT.id(_globalStyle);
-    var style = _addScopeCss(attr, out);
+    var style = _ctStyle(attr, out,route);
     if(style===null){
       return;
     }
@@ -2893,78 +2901,77 @@
     }
   }
 
-  var _scoped_style_id='_scoped_style_id',_scoped_style_index=0;
-  function _addScopeCss(attr, out) {
-    if (out._JT_attr('id') === __ROOT) {
-      var s = _JT.ct('style')._JT_attr({
-        'type': 'text/css',
-        'RootStyle': ''
-      });
-    } else {
-      if(_JT.attr('scope-src="'+attr+'"')._JT_exist()){
-        return null;
+  var _scoped_style_id='_scoped_style_id',_scoped_ele_id='scoped-ele-id',_scoped_id=0;
+  function _ctStyle(attr, out,route) {
+    var s = _JT.ct('style')._JT_attr({
+      'type': 'text/css',
+    });
+    if(route){
+      var rstyle=_JT.attr('style-type=RouterOutStyle')
+      if(rstyle._JT_exist()){
+        rstyle._JT_empty();
+        return rstyle;
       }
-      out[_scoped_style_id]=_scoped_style_index++;
-      var s = _JT.ct('style')._JT_attr({
-        // 'class': _scopeStyle,
-        'type': 'text/css',
+      out[_scoped_style_id]='RouterOut';
+      out._JT_attr(_scoped_ele_id,'RouterOut')
+      s._JT_attr({
+        'style-type':'RouterOutStyle',
+        '_scoped_style_id':out[_scoped_style_id],
         'scope-src': attr,
-        '_scoped_style_id':'s'+_scoped_style_index
-      });
+      })
+    }else{
+      if (out._JT_attr('id') === __ROOT) {
+        out[_scoped_style_id]='Root';
+        out._JT_attr(_scoped_ele_id,'Root');
+        var s = _JT.ct('style')._JT_attr({
+          'type': 'text/css',
+          'style-type': 'RootStyle'
+        });
+      } else {
+        if(_JT.attr('scope-src="'+attr+'"')._JT_exist()){
+          return null;
+        }else{
+          if(!out[_scoped_style_id]){
+            var id='s'+(++_scoped_id);
+            out[_scoped_style_id]=id;
+            out._JT_attr(_scoped_ele_id,id)
+          }
+          s._JT_attr({
+            'style-type':'CompStyle',
+            'scope-src': attr,
+            '_scoped_style_id':id
+          });
+        }
+      }
     }
     return s;
   }
-  function _checkLoadStyles(out,cssCount, cssTotal, style, txt) {//, cssExist
+  //将组件css组合起来加入 head
+  function _checkLoadStyles(out,cssCount, cssTotal, style, txt) {
     if (cssCount == cssTotal) {
+      var id=out[_scoped_style_id]
       var css='';
       if (txt.length > 0) {
         txt.forEach(function(item){
           if(item.scoped){
-            css+=_rewriteScopeCss(out,item.css);
+            css+=_addScopedCss(item.css,id);
           }else{
             css+=_removeBlanks(item.css);
           }
         })
         style._JT_html(css)
         _JT.tag('head').append(style);
+        //out.append(style);
       }
     }
   }
-
-  function _less(str,item){
-    if(Jet.config.less&&_canUse('less')&&(!item||item._JT_attr('jless')!=='false'))
-      return Jet.less.toCss(str)
-    return str;
-  }
-  function _babel(str,item){
-    if(Jet.config.babel&&_canUse('babel')&&(!item||item._JT_attr('jbabel')!=='false'))
-      return Jet.babel.toEs5(str)
-    return str;
-  }
-  function _rewriteScopeCss(ele,css){//return css;
+  //添加scoped前缀
+  function _addScopedCss(css,id){//without less
     if(css.trim()===''){
       return css;
     }
-    var id=ele._JT_attr(_scoped_id);
-    if(!id){
-      id=_sid_index++;
-      ele._JT_attr(_scoped_id,'s'+_sid_index);
-    }
-    // if(_canUse('less')){
-    //   css='['+_scoped_id+'=s'+_sid_index+']{'+css+'}';
-    //   return Jet.less.toCss(css);
-    // }else{
-      return _addScopedCss(css);
-      // css=css.trim();
-      // var selector='['+_scoped_id+'=s'+_sid_index+'] ';
-      // css=css._JT_replaceAll('}','}'+selector)
-      // css=selector+css.substring(0,css.lastIndexOf(selector))
-      // return css
-    // }
-  }
-  function _addScopedCss(css){//without less
     css=_removeNote(css);
-    var preFix='['+_scoped_id+'=s'+_sid_index+'] ';
+    var preFix='['+_scoped_ele_id+'='+id+'] ';
     css=css.trim();
     css='}'+css;
     var newCss=[];
@@ -3008,6 +3015,16 @@
   }
   function _removeBlanks(css){
     return css.replace(_mutli_blank,' ')
+  }
+  function _less(str,item){
+    if(Jet.config.less&&_canUse('less')&&(!item||item._JT_attr('jless')!=='false'))
+      return Jet.less.toCss(str)
+    return str;
+  }
+  function _babel(str,item){
+    if(Jet.config.babel&&_canUse('babel')&&(!item||item._JT_attr('jbabel')!=='false'))
+      return Jet.babel.toEs5(str)
+    return str;
   }
 
   /*bind*********************************************************************************/
@@ -4376,11 +4393,12 @@
       if(_isWeekDe(n)){
         wl.push(_fixLib(n));
       }else{
-        return true;//只要有一个强依赖
+        if(!_canUse(n))
+          return true;//只要有一个强依赖
       }
     }
     for(var i=0;i<wl.length;i++){
-      if(list.indexOf(wl[i])!==-1){
+      if(list.indexOf(wl[i])!==-1 && !_canUse(wl[i])){
         return true;//弱依赖只要有一个在当前加载列表中
       }
     }
@@ -4450,6 +4468,7 @@
   }
   Jet.use = function () {
     _use_index++;
+    
     var args = ArrProto.splice.call(arguments, 0);
     var back=[];
     for(var i=args.length-1;i>=0;i--){
@@ -4598,6 +4617,7 @@
     _initValidAndLang:_initValidAndLang,
     _babel:_babel,
     _less:_less,
+    _addScopedCss:_addScopedCss
   }
 })();
 

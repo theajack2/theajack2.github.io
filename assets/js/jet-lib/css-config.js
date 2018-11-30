@@ -15,7 +15,7 @@
     var _load=_JT.load;
     var _reg=new RegExp("({{)((.|\\n)*?)(}})","g");
     var _numReg=new RegExp("(\\[)((.|\\n)*?)(\\])","g");
-    var _commonStyle = "JcommonStyle",_COMMON_CSS='COMMON_CSS';
+    var _cssConfCom = "CssConfCommon",_COMMON_CSS='COMMON_CSS';
     var conf={};
     conf.preloadCss=function(t){
       var m=t.match(new RegExp("(\\(\\()((.|\\n)*?)(\\)\\))","g"));
@@ -59,6 +59,8 @@
     if(url.indexOf('src/css/common.less')!==-1){
         commonCssName='common.less';
     }
+    var confCommon=o.cloneNode()._JT_attr('style-type',_cssConfCom);
+    document.head.appendChild(confCommon);
     //这里的url不能使用 /src/css，因为如果Jet router 设置了trueBase 则 /src 前面还有路径，所以这里让用户自己填写在link标签里
     conf.xhr=_load(url.replace(commonCssName,'css.conf'),function(res){
       eval('Jet.__css_conf.conf='+res);
@@ -68,16 +70,13 @@
         }else{
             res2=C._less(res2);
         }
-        var comStyle=o.cloneNode();
-        comStyle.innerHTML=res2;
+        var comStyle=_ctCommonStyle()._JT_html(res2);
         document.head.insertBefore(comStyle,common)
-        //document.head.appendChild(comStyle);
-        //document.head.removeChild(pre_style);
         document.head.removeChild(common);
       });
     });
     //add global css
-
+    //路由页面公共样式
     conf._loadCommonCss=function() {
         var commonCss = [];
         var _r = Jet.router.path.substring(Jet.router.base.length);
@@ -95,6 +94,9 @@
                 }
             }
         });
+        if(arr.length==0){
+            confCommon._JT_empty();
+        }
         arr.forEach(function (item) {
             if (typeof item == 'string') {
                 length--;
@@ -111,25 +113,36 @@
             }
         });
     }
+    //路由页面公共样式
     function _loadCommonCssCall(commonCss, length) {
-        var _c=_JT.id(_COMMON_CSS)
         if (length == 0) {
             if (commonCss.length > 0) {
-                if (_JT.id(_commonStyle)._JT_exist()) {
-                    if (commonCss.join('') != _JT.id(_commonStyle).innerHTML) {
-                        _JT.id(_commonStyle)._JT_html(C._less(commonCss.join(''),_c))
+                var res=C._addScopedCss(C._less(commonCss.join('')),'RouterOut')
+                if (confCommon._JT_exist()) {
+                    if (commonCss.join('') != confCommon.innerHTML) {
+                        confCommon._JT_html(res)
                     }
                     // }else if(_JT.id(_routeStyle)._JT_exist()){
                     //   document.head.insertBefore(_JT.ct('style')._JT_attr('id',_commonStyle)._JT_html(commonCss.join('')),_JT.id(_routeStyle));
                 } else {
-                    document.head.appendChild(_JT.ct('style')._JT_attr('id', _commonStyle)._JT_html(C._less(commonCss.join(''),_c)));
+                    confCommon=_JT.ct('style')._JT_attr({
+                        'type': 'text/css',
+                        'style-type':_cssConfCom
+                    })._JT_html(res);
+                    document.head.appendChild(confCommon);
                 }
             } else {
-                _JT.id(_commonStyle)._JT_exist(function (item) {
+                confCommon._JT_exist(function (item) {
                     item._JT_empty();
                 });
             }
         }
+    }
+    function _ctCommonStyle(){
+        return  _JT.ct('style')._JT_attr({
+            'type': 'text/css',
+            'style-type':'CommonCss'
+        });
     }
     conf._reloadCssConf=function(call) {
       var c=Jet.__css_conf;
@@ -143,8 +156,7 @@
                 }else{
                     res2=C._less(res2);
                 }
-                var comStyle = document.createElement('style');
-                comStyle.innerHTML =res2;
+                var comStyle = _ctCommonStyle()._JT_html(res2);
                 document.head.insertBefore(comStyle, _JT.id(_COMMON_CSS));
                 document.head.removeChild(_JT.id(_COMMON_CSS));
                 c.preloadCss = undefined;

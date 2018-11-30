@@ -1,8 +1,4 @@
-.a{
-  .b{
-    color:#aaa;
-  }
-}
+
 ::-webkit-scrollbar {
   width:10px;
 }
@@ -27,18 +23,19 @@ body{
   background-color: #eee;
   overflow-y: hidden;
 }
-.loading{
-  padding-top: 200px;
-  text-align: center;
-}
-.loading .j-icon{
-  font-size: 80px;
+
+.APP_Loading{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 50px;
+  margin-left: -25px;
+  margin-top: -25px;
   color: #888;
 }
-.loading-text{
-  font-size: 20px;
-  margin-top: 10px;
-  color: #444;
+.APP_Loading.router-out{
+  margin-left: 85px;
+  color: #888!important;
 }
 .frame-i{
     margin-right: 5px;
@@ -393,6 +390,9 @@ pre{
   display: none;
 }
 @media screen and (max-width: 600px) {
+  .APP_Loading.router-out{
+    margin-left: -25px;
+  }
   ::-webkit-scrollbar {
     width:0px;
   }

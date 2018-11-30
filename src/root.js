@@ -8,11 +8,11 @@ JET({
       })
     },
     onroute: function () {
-      console.log('onroute');
-      this.$dom.out.html = '<div class="loading"><i class="j-icon icon-spin icon-spinner-snake"></i><div class="loading-text"> 加载中...</div></div>';
+      // console.log('onroute');
+      this.$dom.out.html = '<div class="APP_Loading router-out"><i class="j-icon icon-spin icon-spinner-indicator"></i></div>';
     },
     onrouted: function (isFresh) {
-      console.log('onrouted');
+      // console.log('onrouted');
       if (!isFresh) {
         Jet.module.Scroll.routed();
       }

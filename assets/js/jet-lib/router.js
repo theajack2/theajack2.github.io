@@ -210,6 +210,7 @@
                 var _fRes = _formatUrl(url);
                 var search = _fRes.search;
                 url = _fRes.url;
+                
                 var item = _JT.attr(_route + '="' + url + '"');
                 Jet.router.activeRouter(item);
                 url = _checkUrl(url);
@@ -238,6 +239,7 @@
                     if (search != '') {
                         search = '?' + search;
                     }
+                    
                     Jet.router.path = url;
                     Jet.router.url = url.substring(Jet.router.base.length);
                     var stateObject = {};
@@ -258,6 +260,7 @@
                     if (typeof JUI !== 'undefined') {
                         JUI.dialog.removeAll()
                     }
+                    
                     Jet.router.__xhr = _JT.load(C._getSrc(file, 'html'), function (html) {
                         Jet.router.__xhr = null;
                         var out = Jet.router._initRouterOut()._JT_html(html);
@@ -344,7 +347,6 @@
             Jet.router.__last_router_comp = _ra;
             _exeFunc(_ra._tools._beforeunmount)
             _exeBeforeUnmount(_ra.$child);
-            Jet.router.__last_router_comp = _ra;
         } else if (calls == '__onrouted') {
             _ra = Jet.router.__last_router_comp;
             if (!_ra)
@@ -375,7 +377,10 @@
     function _removeFromJets(item) {
         var name = item._tools.name;
         _exeFunc(item._tools._onunmounted);
-        _JT.attr(_ssid+'=s'+item._tools._ele[_ssid])._JT_remove();
+        var id=item._tools._ele[_ssid];
+        if(id&&id!=='RouterOut'){
+            _JT.attr(_ssid+'='+id)._JT_remove();
+        }
         _clearRouteFunc('__onroute', name);
         _clearRouteFunc('__onrouted', name);
         if (Jet.comp[name] && Jet.comp[name].$DOM) {
@@ -458,6 +463,7 @@
         scripts._JT_each(function (item, i) {
             if (item._JT_hasAttr("src")) {
                 _JT.load(C._getSrc(item._JT_attr("src"), 'js'), function (src) {
+                    
                     src=C._babel(src);
                     txt[i + 1] = dealParJet(src);
                     if (i == index) {
@@ -466,6 +472,7 @@
                     }
                 });
             } else {
+                
                 var src=C._babel(item._JT_html());
                 txt[i + 1] = dealParJet(src);
             }

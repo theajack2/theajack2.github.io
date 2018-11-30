@@ -31,9 +31,9 @@ Jet.define('Query',function(){
         intro:'介绍build.config.json文件',
         des:'build.config'
     },{
-        name:'HTML模板',
+        name:'Jet组件',
         url:'/intro/html',
-        intro:'Jet的HTML模板使用的html后缀的文件，语法与普通的html一样。',
+        intro:'Jet的Jet组件使用的html后缀的文件，语法与普通的html一样。',
         des:''
     },{
         name:'图片',

@@ -6,9 +6,9 @@
 <div class='title'>Jload</div>
 <div class="sub">
     <div class='text indent'>
-        使用Jload可以在某个元素之内加载其他的html模板，加载的模板可以使用父模板的jet，也可以自己定义jet。
-        使用的格式是 <span class='red'>Jload='file'</span> html模板文件可以忽略 .html 后缀。
-        Jload使用的html模板必须位于 /src/html目录下面，可以嵌套使用文件夹。
+        使用Jload可以在某个元素之内加载其他的Jet组件，加载的模板可以使用父模板的jet，也可以自己定义jet。
+        使用的格式是 <span class='red'>Jload='file'</span> Jet组件文件可以忽略 .html 后缀。
+        Jload使用的Jet组件必须位于 /src/html目录下面，可以嵌套使用文件夹。
         接下来请看一个加载for_load.html文件的例子:
     </div>
     <div class='text'>
@@ -96,7 +96,7 @@ new Jet({
     });
 </script> -->
 
-<style scoped=false>
+<style>
         ._red{
             color:#f00;
         }
@@ -104,10 +104,21 @@ new Jet({
     <div class='title'>Jload</div>
     <div class="sub">
         <div class='text indent'>
-            Jet 使用 Jload 加载组件。使用Jload可以在某个元素之内加载其他的html模板，加载的模板可以使用父模板的jet，也可以自己定义jet。
-            使用的格式是 <span class='red'>Jload='file'</span> html模板文件可以忽略 .html 后缀。
+            Jet 使用 Jload 加载组件。使用Jload可以在某个元素之内加载其他的Jet组件，加载的模板可以使用父模板的jet，也可以自己定义jet。
+            使用的格式是 <span class='red'>Jload='file'</span> Jet组件文件可以忽略 .html 后缀。
             file 可以使用<span class='link' jon='Jet.root.jumpTo("/intro/res")'>资源管理</span>中定义的资源名。
-            Jload使用的html模板必须位于 /src/html目录下面，可以嵌套使用文件夹。
+            Jload使用的Jet组件必须位于 /src/html目录下面，可以嵌套使用文件夹。
+        </div>
+        <div class='text indent'>
+            jload 元素中若是设置了html内容，则会在该jload元素渲染之前显示设置的html内容，这一点很适合做一个加载动画，如下：
+        </div>
+        <div class='j-code not-test' disabled width='99%' height='auto'>
+&lt;div jload='/attr/for_load.html'>
+    &lt;div class='loading'>
+        &lt;i class="j-icon icon-spinner-indicator icon-spin">&lt;/i>
+        &lt;span>加载中...&lt;/span>
+    &lt;/div>
+&lt;/div>
         </div>
         <div class='text indent' jump-des='jpar'>
             使用<span class='red'>jpar</span>属性设置子组件Jet元素的父Jet元素，用于父组件与子组件间状态共享。jpar值为父组件的name属性。
@@ -126,46 +137,46 @@ new Jet({
             for_load.html：
         </div>
         <div class='j-code not-test' disabled width='99%' height='auto'>
-    &lt;div j='user'>
-        &lt;span j='name'>&lt;/span>:
-        &lt;span jif='{{$.age}}>20:class[_red]' j='age'>&lt;/span>
-    &lt;/div>
-    &lt;div j='message' jif='{{$.message}}=="hello jload":class[_red]'>&lt;/div>
-    &lt;br>
-    &lt;div j='user'>
-        修改父模版年龄：&lt;input type="text" j='age'>
-    &lt;/div>
-    &lt;div>
-        修改当前模板的message：&lt;input type="text" j='message'>
-    &lt;/div>
-    &lt;script>
-        new Jet({
-            data:{
-                message:'hello jload'
-            }
-        })
-    &lt;/script>
+&lt;div j='user'>
+    &lt;span j='name'>&lt;/span>:
+    &lt;span jif='{{$.age}}>20:class[_red]' j='age'>&lt;/span>
+&lt;/div>
+&lt;div j='message' jif='{{$.message}}=="hello jload":class[_red]'>&lt;/div>
+&lt;br>
+&lt;div j='user'>
+    修改父模版年龄：&lt;input type="text" j='age'>
+&lt;/div>
+&lt;div>
+    修改当前模板的message：&lt;input type="text" j='message'>
+&lt;/div>
+&lt;script>
+    new Jet({
+        data:{
+            message:'hello jload'
+        }
+    })
+&lt;/script>
         </div>
         <div class='text'>
             父模板代码:
         </div>
         <div class='j-code' disabled width='99%' height='auto'>
-    &lt;style>
-        ._red{
-            color:#f00;
-        }
-    &lt;/style>
-    &lt;div jload='/attr/for_load.html'>&lt;/div>
-    &lt;script>
-        new Jet({
-            data:{
-                user:{
-                    name:'jack',
-                    age:20
-                }
+&lt;style>
+    ._red{
+        color:#f00;
+    }
+&lt;/style>
+&lt;div jload='/attr/for_load.html'>&lt;/div>
+&lt;script>
+    new Jet({
+        data:{
+            user:{
+                name:'jack',
+                age:20
             }
-        });
-    &lt;/script>
+        }
+    });
+&lt;/script>
         </div>
         <div class='text'>
             以下是输出的结果：
