@@ -42,10 +42,9 @@
 // Jet.config.babel=false;
 //Jet.config.env='pro'
 Jet.use.all(
-    //'babel','less',
+    '-babel','-less',
     //'cnchar',
     //'/src/js/cnchar.js',
-    
     function (times) {
         //Jet.router.setBase('/jet');
         Jet.lang.use(['cn', 'en']);
