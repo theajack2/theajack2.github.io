@@ -54,7 +54,7 @@
     当然若您需要使用es6进行您的项目开发，您可以在安装jet-js-cli后通过jet build命令将es6转换为es5在生产环境中使用。
 </div>
 <div class='text indent'>
-    另外，Jet具有良好的兼容性，它支持所有兼容 ECMAScript 5 的浏览器。
+    另外，Jet具有良好的兼容性，在未使用路由库的情况下，可以兼容ie9+。在使用路由库由于ie9及以下不支持 pushState 方法，因此不兼容ie9，兼容ie10+。其他浏览器和移动端浏览器也都能兼容较低版本。
 </div>
 <!-- <div class='text indent'>
     该API文档完全使用Jet开发，您可以<a href="https://www.theajack.com/jet/jet-api.zip" download='jet-api.zip' class='link'>点击下载</a>该项目作为使用Jet的参考。后面的安装使用章节会有一个更简单的、更易于起步的项目供您下载。

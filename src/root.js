@@ -47,6 +47,11 @@ JET({
         Jet.root._code = item.next().$jui.txt();
         this.$route('/code');
       },
+      copyCode: function(item){
+        Jet.$.copy(item.next().$jui.txt(),function(){
+          JUI.msg('复制成功','success')
+        })
+      },
       jumpTo: function (url, des, call) {
         var _this = this;
         Jet.router.route(url, function () {

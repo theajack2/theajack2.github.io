@@ -1104,9 +1104,19 @@
       }
     }
   }
+  
   function _addRegistDc(jet, path, attr, call, index) {
+    var set=function(v){
+      (new Function('jet','v','jet'+path+'=v'))(jet,v)
+    }
     Jet.Base.prototype.$regist.call(jet, path + attr, function (key, value) {
-      call.call(jet, value, key, index)
+      call.call(jet, {
+        value:value,
+        key:key,
+        index:index,
+        set:set,
+        path:'this'+path+attr
+      })
     });
   }
   function _getInitData(item, attr, _this, isJload) {
@@ -3515,6 +3525,7 @@
   }
 
   /*text*********************************************************************************/
+
   Jet.Text = function (opt) {
     Jet.Base.call(this, opt, _text);
     this.isHtml = opt.ele._JT_hasAttr(_html);
@@ -3531,6 +3542,7 @@
           data: d,
           ele: this.ele,
           jet: this,
+          parData:this.data,
           root: this.jet
         }) : d;
         if (this.isHtml) {

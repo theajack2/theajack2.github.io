@@ -206,8 +206,13 @@ jpath 是否使用jet的path机制，默认为true。如不使用，则默认使
     新增 模块 前缀 no-babel:
     use.all 方法 参数可以是 '-lib' 表示排除某个官方库
     Jet.canUse() ,检测某个模块是否可用
-    完善scoped属性
-  
+    改进scoped属性
+  11-30
+    修复一些有关scoped属性的bug 
+  12-6
+    ondatachange 函数中的参数使用 json ,并新增 set方法和path属性。
+    现在 参数有 key,value,index（这是一个记录索引的数组）,set（设置值）
+
   需完善 组件销毁的生命周期
   
   需将外围设施部署成 npm包

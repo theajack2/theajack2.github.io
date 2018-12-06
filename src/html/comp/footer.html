@@ -27,10 +27,14 @@
             }, lastApi: function () {
                 Jet.router.route(this.lastUrl);
             }, setLink: function (opt) {
-                this.last = opt.last || '';
-                this.lastUrl = opt.lastUrl;
-                this.next = opt.next || '';
-                this.nextUrl = opt.nextUrl;
+                if(opt!=null){
+                    this.last = opt.last || '';
+                    this.lastUrl = opt.lastUrl;
+                    this.next = opt.next || '';
+                    this.nextUrl = opt.nextUrl;
+                }else{
+                    this.next='';
+                }
             }
         }
     })

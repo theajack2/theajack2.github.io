@@ -155,8 +155,8 @@
             }
         },
         ondatachange: {
-            queryString: function (v) {
-                var arr = this.$get('Query').search(v);
+            queryString: function (d) {
+                var arr = this.$get('Query').search(d.value);
                 this.queryList.$replace(arr);
                 this.number = arr.length;
             }

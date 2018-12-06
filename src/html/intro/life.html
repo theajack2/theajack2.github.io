@@ -56,8 +56,17 @@
 <div class='title' jump-des='ondatachange'>2.ondatachange 详解</div>
 <div class="sub">
     <div class='text'>
-        ondatachange 属性用于为Jet数据添加一个数据变化的监听事件，事件方法的 this 指代的是根Jet元素，方法有两个参数，第一个是改变之后的值，改变数据的键。请看下面一个例子：
+        ondatachange 属性用于为Jet数据添加一个数据变化的监听事件，事件方法的 this 指代的是根Jet元素，方法有一个json类型的参数，其中包含的属性入下。
     </div>
+    <pre>
+opt={
+    value:'',//表示改变之后的值
+    key:'',//表示值的键或索引
+    index:[],//一个包含索引的数组，如果是多层数组，这个数组就是每层索引组成的数组
+    set:function,//这个是一个函数，可以调用它来设置数据，使用时需要谨慎，以防止出现无限循环的情况。
+    path:'',//完整的属性或索引路径
+}
+    </pre>
     <div class='title'>a.字符串形式</div>
     <div class='text'>
         使用字符串形式时 ondatachange 中的键值对都是字符串和函数类型，直接使用表达式来表示某一个变量，请看一个例子：
@@ -77,18 +86,18 @@
             array:[0,1]
         },
         ondatachange:{
-            'string':function(value,key){
-                JUI.msg('string:'+key+"--"+value);
+            'string':function(d){
+                JUI.msg('string:'+d.key+"--"+d.value);
             },
-            'json.key':function(value,key){//直接使用 json.key 设置 json中key的监听
-                JUI.msg('json:'+key+"--"+value);
+            'json.key':function(d){
+                JUI.msg('json:'+d.key+"--"+d.value);
             },
-            'array[0]':function(value,key){//直接使用 array[index] 设置 数组中某个元素的监听
-                JUI.msg('array:'+key+"--"+value);
+            'array[0]':function(d){
+                JUI.msg('array:'+d.key+"--"+d.value);
             },
-            'array[1]':function(value,key){
-                JUI.msg('array:'+key+"--"+value);
-            }
+            'array[1]':function(d){
+                JUI.msg('array:'+d.key+"--"+d.value);
+            },
         }
     });
 &lt;/script>
@@ -149,51 +158,51 @@
         },
         ondatachange:{
             json2:{
-                $func:function(value,key){
-                    JUI.msg('json2:'+key+"--"+value);
+                $func:function(d){
+                    JUI.msg('json2:'+d.key+"--"+d.value);
                 },
                 key:{
-                    $func:function(value,key){
-                        JUI.msg('key:'+key+"--"+JSON.stringify(value));
+                    $func:function(d){
+                        JUI.msg('key:'+d.key+"--"+JSON.stringify(d.value));
                     },
-                    k:function(value,key){
-                        JUI.msg('k:'+key+"--"+value);
+                    k:function(d){
+                        JUI.msg('k:'+d.key+"--"+d.value);
                     }
                 },
             },
             array2:{
-                $func:function(value,key){
-                    JUI.msg('array2:'+key+"--"+value);
+                $func:function(d){
+                    JUI.msg('array2:'+d.key+"--"+d.value);
                 },
                 $each:{
-                    $func:function(value,key){
-                        JUI.msg('each:'+key+"--"+value);
+                    $func:function(d){
+                        JUI.msg('each:'+d.key+"--"+d.value);
                     },
-                    a1:function(value,key,index){
+                    a1:function(d){
                         //index 是元素索引的数组，多层数组嵌套时第一个元素是最外层的索引，最后一个元素是最内层的索引
-                        JUI.msg(index.toString()+':'+key+"--"+value);
+                        JUI.msg(d.index.toString()+':'+d.key+"--"+d.value);
                     },
-                    a2:function(value,key,index){
-                        JUI.msg(index.toString()+':'+key+"--"+value);
+                    a2:function(d){
+                        JUI.msg(d.index.toString()+':'+d.key+"--"+d.value);
                     },
                 },
             },
             array3:{
-                $func:function(value,key){
-                    JUI.msg('array3:'+key+"--"+value);
+                $func:function(d){
+                    JUI.msg('array3:'+d.key+"--"+d.value);
                 },
                 $each:{
-                    $func:function(value,key,index){
-                        JUI.msg(index.toString()+':'+key+"--"+value);
+                    $func:function(d){
+                        JUI.msg(d.index.toString()+':'+d.key+"--"+d.value);
                     },
                     $each:{
-                        $func:function(value,key,index){
-                            JUI.msg(index.toString()+':'+key+"--"+value);
+                        $func:function(d){
+                            JUI.msg(d.index.toString()+':'+d.key+"--"+d.value);
                         },
                     }
-                    // 因为已经是嵌套最底层的一个，所以上面一个 $each 等价于下面写法
-                    // $each:function(value,key,index){
-                    //     JUI.msg(index.toString()+':'+key+"--"+value);
+                    // 或者使用
+                    // $each:function(d){
+                    //     JUI.msg(d.index.toString()+':'+d.key+"--"+d.value);
                     // }
                 }
             }
@@ -273,65 +282,65 @@ new Jet({
             array3:[[11,12],[21,22]]
         },
         ondatachange:{
-            'string':function(value,key){
-                JUI.msg('string:'+key+"--"+value);
+            'string':function(d){
+                JUI.msg('string:'+d.key+"--"+d.value);
             },
-            'json.key':function(value,key){
-                JUI.msg('json:'+key+"--"+value);
+            'json.key':function(d){
+                JUI.msg('json:'+d.key+"--"+d.value);
             },
-            'array[0]':function(value,key){
-                JUI.msg('array:'+key+"--"+value);
+            'array[0]':function(d){
+                JUI.msg('array:'+d.key+"--"+d.value);
             },
-            'array[1]':function(value,key){
-                JUI.msg('array:'+key+"--"+value);
+            'array[1]':function(d){
+                JUI.msg('array:'+d.key+"--"+d.value);
             },
             json2:{
-                $func:function(value,key){
-                    JUI.msg('json2:'+key+"--"+value);
+                $func:function(d){
+                    JUI.msg('json2:'+d.key+"--"+d.value);
                 },
                 key:{
-                    $func:function(value,key){
-                        JUI.msg('key:'+key+"--"+JSON.stringify(value));
+                    $func:function(d){
+                        JUI.msg('key:'+d.key+"--"+JSON.stringify(d.value));
                     },
-                    k:function(value,key){
-                        JUI.msg('k:'+key+"--"+value);
+                    k:function(d){
+                        JUI.msg('k:'+d.key+"--"+d.value);
                     }
                 },
             },
             
             array2:{
-                $func:function(value,key){
-                    JUI.msg('array2:'+key+"--"+value);
+                $func:function(d){
+                    JUI.msg('array2:'+d.key+"--"+d.value);
                 },
                 $each:{
-                    $func:function(value,key){
-                        JUI.msg('each:'+key+"--"+value);
+                    $func:function(d){
+                        JUI.msg('each:'+d.key+"--"+d.value);
                     },
-                    a1:function(value,key,index){
+                    a1:function(d){
                         //index 是元素索引的数组，多层数组嵌套时第一个元素是最外层的索引，最后一个元素是最内层的索引
-                        JUI.msg(index.toString()+':'+key+"--"+value);
+                        JUI.msg(d.index.toString()+':'+d.key+"--"+d.value);
                     },
-                    a2:function(value,key,index){
-                        JUI.msg(index.toString()+':'+key+"--"+value);
+                    a2:function(d){
+                        JUI.msg(d.index.toString()+':'+d.key+"--"+d.value);
                     },
                 },
             },
             array3:{
-                $func:function(value,key){
-                    JUI.msg('array3:'+key+"--"+value);
+                $func:function(d){
+                    JUI.msg('array3:'+d.key+"--"+d.value);
                 },
                 $each:{
-                    $func:function(value,key,index){
-                        JUI.msg(index.toString()+':'+key+"--"+value);
+                    $func:function(d){
+                        JUI.msg(d.index.toString()+':'+d.key+"--"+d.value);
                     },
                     $each:{
-                        $func:function(value,key,index){
-                            JUI.msg(index.toString()+':'+key+"--"+value);
+                        $func:function(d){
+                            JUI.msg(d.index.toString()+':'+d.key+"--"+d.value);
                         },
                     }
                     // 或者使用
-                    // $each:function(value,key,index){
-                    //     JUI.msg(index.toString()+':'+key+"--"+value);
+                    // $each:function(d){
+                    //     JUI.msg(d.index.toString()+':'+d.key+"--"+d.value);
                     // }
                 }
             }

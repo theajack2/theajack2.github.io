@@ -62,9 +62,16 @@ Jet.define('Scroll', function () {
             //Jcode.init();
             if (Jet.router.lastTrueHash !== "#/code") {
                 $J.cls('j-code').each(function (item) {
+                    var w=$J.ct('div');
+                    w.append($J.ct('button').attr('class','j-btn mm-r j-icon-mn test-online').clk(function(){
+                        Jet.root.copyCode(this.parent())
+                    }).html('<i class="j-icon icon-copy"></i>'))
                     if (!item.hasClass('not-test')) {
-                        item.before('<button class="j-btn test-online" onclick="Jet.root.testOnLine(this)"><i class="j-icon icon-edit"></i>在线使用</button>')
+                        w.append($J.ct('button').attr('class','j-btn test-online').clk(function(){
+                            Jet.root.testOnLine(this.parent())
+                        }).html('<i class="j-icon icon-edit"></i>在线使用'))
                     }
+                    item.before(w)
                 });
 
                 if (typeof _g._top !== 'undefined') {

@@ -474,20 +474,23 @@
       return _copy(this.content())
     };
   
-    function _copy(b) {
+    function _copy(b,call) {
       var a = $J.id("jCopyInput");
       if (!a.exist()) {
-        a = $J.ct("input").attr({
+        a = $J.ct("textarea").attr({
           "type": "text",
           "id": "jCopyInput"
         });
         $J.body().append(a)
       }
-      a.val(b).select();
+      a.html(b).select();
       if (document.execCommand("Copy")) {
+        if(call){
+          call(b);
+        }
         return true
       } else {
-        alert("Copy is not supported in your browser");
+        console.warn("Copy may not supported in your browser");
         return false
       }
     };

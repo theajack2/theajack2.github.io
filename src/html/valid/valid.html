@@ -1,7 +1,10 @@
 <div class='title'>Jvalid</div>
 
-<div class='text'>
-    Jet中使用 Jvalid 属性来对输入元素设置验证的规则，使用格式是 <span class='red'>jvalid='type'</span>。
+<div class='text indent'>
+    Jet中使用 Jvalid 属性来对输入元素设置验证的规则，使用格式是 <span class='red'>jvalid='type[]'</span>。
+    放括号内的是一些特殊规则需要设置的参数，比如对数字范围或长度的限制。具体请参考验证规则说明。
+</div>
+<div class='text indent'>
     您可以选择Jet中已经定义好的一些验证规则，或者自定义验证规则。
     自定义验证规则的使用格式是 <span class='red'>jvalid='express[exp]'</span> 。请看一个例子：
 </div>
@@ -25,8 +28,9 @@
 </div>
 
 <div class='title' jump-des='regExp'>预定义的验证规则</div>
-<div class='text'>
+<div class='text indent'>
     Jet中预定义的验证规则有以下几种，你可以直接使用规则名来使用它们。
+    其中 除了null 其他都只能单独使用，null可以和其他任何规则共同使用，表示可以为空或者符合验证的规则。当与notnull共同使用时会忽略null。
     <div class="list">
         <div>1.notnull <span class="light-text">(非空值)</span> </div>
         <div>2.null <span class="light-text">(允许空值)</span> </div>
@@ -43,7 +47,6 @@
         <div>14.range <span class="light-text">(指定范围的数字，后面方括号的使用规则与number一致)</span> </div>
         <div>15.express[exp] <span class="light-text">(自定义验证规则)</span> </div>
     </div>
-    上述的规则中 除了null 其他都只能单独使用，null可以和其他任何规则共同使用，表示可以为空或者符合验证的规则。当与notnull共同使用时会忽略null。
 </div>
 <script>
     new Jet({
